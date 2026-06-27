@@ -2,49 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>API Endpoint</title>
+    <title>API Response</title>
+    <style>
+        body { background: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; padding: 20px; }
+        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 14px; }
+    </style>
 </head>
 <body>
-<script>
-    async function handleApiCall() {
-        // URL থেকে 'term' প্যারামিটারটি নেওয়া হচ্ছে (যেমন: ?term=@ownbakchodi2)
-        const urlParams = new URLSearchParams(window.location.search);
-        let searchTerm = urlParams.get('term');
+    <pre id="output">Loading API Response...</pre>
 
-        // যদি ইউজার কোনো 'term' না দেয়, তবে ডিফল্ট হিসেবে '@ownbakchodi2' কাজ করবে
-        if (!searchTerm) {
-            searchTerm = "@ownbakchodi2";
+    <script>
+        async function fetchApi() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const term = urlParams.get('term') || "@ownbakchodi2";
+            const output = document.getElementById('output');
+
+            // CORS বাইপাস করার জন্য একটি প্রক্সি সার্ভিস ব্যবহার করা হয়েছে
+            const proxyUrl = "https://api.allorigins.win/get?url=";
+            const targetUrl = `https://tg2num-eight.vercel.app/sms?key=PRIME&term=${encodeURIComponent(term)}`;
+
+            try {
+                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+                const data = await response.json();
+                const actualData = JSON.parse(data.contents);
+
+                const finalOutput = {
+                    "Developer": "@RDXallhacknew",
+                    "Status": "100% Success",
+                    "Response": actualData
+                };
+
+                output.innerText = JSON.stringify(finalOutput, null, 4);
+            } catch (error) {
+                output.innerText = "Error: API call failed. Please check your connection or API status.\n\nDeveloper: @RDXallhacknew";
+            }
         }
-
-        const realApiUrl = `https://tg2num-eight.vercel.app/sms?key=PRIME&term=${encodeURIComponent(searchTerm)}`;
-
-        try {
-            const response = await fetch(realApiUrl);
-            const realResponseData = await response.json();
-
-            // আপনার নিজস্ব কাস্টম JSON ফরম্যাট তৈরি
-            const finalJsonOutput = {
-                "developer": "@RDXallhacknew",
-                "status": "100% OK",
-                "searched_term": searchTerm,
-                "api_response": realResponseData
-            };
-
-            // কোনো পেজ বা ডিজাইন ছাড়াই সরাসরি ব্রাউজারে Raw JSON প্রিন্ট করা হচ্ছে
-            document.body.innerHTML = `<pre style="word-wrap: break-word; white-space: pre-wrap; color: #00ff00; background: #000; padding: 20px; font-family: monospace;">${JSON.stringify(finalJsonOutput, null, 4)}</pre>`;
-
-        } catch (error) {
-            const errorJson = {
-                "developer": "@RDXallhacknew",
-                "status": "error",
-                "message": "Failed to fetch real-time response from API."
-            };
-            document.body.innerHTML = `<pre style="color: red; background: #000; padding: 20px; font-family: monospace;">${JSON.stringify(errorJson, null, 4)}</pre>`;
-        }
-    }
-
-    // ফাইলটি ওপেন হওয়া মাত্রই ফাংশনটি রান করবে
-    handleApiCall();
-</script>
+        fetchApi();
+    </script>
 </body>
 </html>
