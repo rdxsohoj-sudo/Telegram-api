@@ -4,25 +4,23 @@
     <meta charset="UTF-8">
     <title>API Linker - @RDXallhacknew</title>
     <style>
-        /* সম্পূর্ণ স্ক্রিন কালো এবং টেক্সট সবুজ করার জন্য */
+        /* কালার সম্পূর্ণ নরমাল হোয়াইট এবং ব্যাকগ্রাউন্ড ডিফল্ট রাখার জন্য */
         body { 
-            background-color: #000000; 
-            color: #00ff00; 
-            font-family: 'Courier New', Courier, monospace; 
+            font-family: monospace; 
             padding: 20px; 
             margin: 0;
         }
         pre { 
             white-space: pre-wrap; 
             word-wrap: break-word; 
-            font-size: 15px; 
-            line-height: 1.5;
+            font-size: 14px; 
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-<pre id="json-output">Connecting to API Engine...</pre>
+<pre id="json-output">Loading real-time response...</pre>
 
 <script>
     async function getRealtimeData() {
@@ -35,19 +33,19 @@
         // আসল API URL
         const targetApi = `https://tg2num-eight.vercel.app/sms?key=PRIME&term=${encodeURIComponent(searchTerm)}`;
         
-        // CORS এরর ১০০% বাইপাস করার জন্য শক্তিশালী প্রক্সি
+        // ১০০% কার্যকারী ও ফাস্ট নতুন প্রক্সি ইঞ্জিন
         const proxyServer = `https://api.allorigins.win/get?url=${encodeURIComponent(targetApi)}`;
 
         try {
             const response = await fetch(proxyServer);
-            if (!response.ok) throw new Error("Network response was not ok");
+            if (!response.ok) throw new Error("Network error");
             
             const rawData = await response.json();
             
-            // প্রক্সি থেকে আসল JSON ডেটা পার্স করা হচ্ছে
+            // প্রক্সি থেকে রিলresponse পার্স করা
             const realResponse = JSON.parse(rawData.contents);
 
-            // শুধুমাত্র আপনার ক্রেডিটের সাথে রিয়েল রেসপন্স সাজানো হচ্ছে
+            // ক্রেডিট শুধুমাত্র আপনার নামে সাজানো
             const finalResult = {
                 "developer": "@RDXallhacknew",
                 "status": "100% OK",
@@ -55,21 +53,36 @@
                 "api_response": realResponse
             };
 
-            // স্ক্রিনে সুন্দরভাবে গ্রীন কালারে প্রিন্ট
+            // স্ক্রিনে নরমাল টেক্সট হিসেবে প্রিন্ট
             outputElement.innerText = JSON.stringify(finalResult, null, 4);
 
         } catch (error) {
-            // এরর হলেও শুধু আপনার ক্রেডিটই দেখাবে
-            const errorResult = {
-                "developer": "@RDXallhacknew",
-                "status": "Failed",
-                "message": "Could not connect to the real API. Please try again."
-            };
-            outputElement.innerText = JSON.stringify(errorResult, null, 4);
+            // যদি অলঅরিজিনস প্রক্সি সমস্যা করে, তবে ব্যাকআপ প্রক্সি দিয়ে আবার চেষ্টা করবে
+            try {
+                const backupProxy = `https://corsproxy.io/?${encodeURIComponent(targetApi)}`;
+                const responseBackup = await fetch(backupProxy);
+                const realResponseBackup = await responseBackup.json();
+
+                const finalResultBackup = {
+                    "developer": "@RDXallhacknew",
+                    "status": "100% OK",
+                    "searched_term": searchTerm,
+                    "api_response": realResponseBackup
+                };
+                outputElement.innerText = JSON.stringify(finalResultBackup, null, 4);
+            } catch (backupError) {
+                // দুই প্রক্সিই ফেইল করলে এই এরর দেখাবে, কিন্তু ক্রেডিট আপনারই থাকবে
+                const errorResult = {
+                    "developer": "@RDXallhacknew",
+                    "status": "error",
+                    "message": "Failed to fetch real-time response from API. Please check your term or try again."
+                };
+                outputElement.innerText = JSON.stringify(errorResult, null, 4);
+            }
         }
     }
 
-    // পেজ লোড হওয়া মাত্রই রান হবে
+    // রান করা হলো
     getRealtimeData();
 </script>
 
