@@ -2,42 +2,76 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>API Response</title>
+    <title>API Linker - @RDXallhacknew</title>
     <style>
-        body { background: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; padding: 20px; }
-        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 14px; }
+        /* সম্পূর্ণ স্ক্রিন কালো এবং টেক্সট সবুজ করার জন্য */
+        body { 
+            background-color: #000000; 
+            color: #00ff00; 
+            font-family: 'Courier New', Courier, monospace; 
+            padding: 20px; 
+            margin: 0;
+        }
+        pre { 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+            font-size: 15px; 
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
-    <pre id="output">Loading API Response...</pre>
 
-    <script>
-        async function fetchApi() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const term = urlParams.get('term') || "@ownbakchodi2";
-            const output = document.getElementById('output');
+<pre id="json-output">Connecting to API Engine...</pre>
 
-            // CORS বাইপাস করার জন্য একটি প্রক্সি সার্ভিস ব্যবহার করা হয়েছে
-            const proxyUrl = "https://api.allorigins.win/get?url=";
-            const targetUrl = `https://tg2num-eight.vercel.app/sms?key=PRIME&term=${encodeURIComponent(term)}`;
+<script>
+    async function getRealtimeData() {
+        const outputElement = document.getElementById('json-output');
+        
+        // URL থেকে ?term= এর মান নেওয়া হচ্ছে, না থাকলে ডিফল্ট @ownbakchodi2 বসবে
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchTerm = urlParams.get('term') || "@ownbakchodi2";
 
-            try {
-                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
-                const data = await response.json();
-                const actualData = JSON.parse(data.contents);
+        // আসল API URL
+        const targetApi = `https://tg2num-eight.vercel.app/sms?key=PRIME&term=${encodeURIComponent(searchTerm)}`;
+        
+        // CORS এরর ১০০% বাইপাস করার জন্য শক্তিশালী প্রক্সি
+        const proxyServer = `https://api.allorigins.win/get?url=${encodeURIComponent(targetApi)}`;
 
-                const finalOutput = {
-                    "Developer": "@RDXallhacknew",
-                    "Status": "100% Success",
-                    "Response": actualData
-                };
+        try {
+            const response = await fetch(proxyServer);
+            if (!response.ok) throw new Error("Network response was not ok");
+            
+            const rawData = await response.json();
+            
+            // প্রক্সি থেকে আসল JSON ডেটা পার্স করা হচ্ছে
+            const realResponse = JSON.parse(rawData.contents);
 
-                output.innerText = JSON.stringify(finalOutput, null, 4);
-            } catch (error) {
-                output.innerText = "Error: API call failed. Please check your connection or API status.\n\nDeveloper: @RDXallhacknew";
-            }
+            // শুধুমাত্র আপনার ক্রেডিটের সাথে রিয়েল রেসপন্স সাজানো হচ্ছে
+            const finalResult = {
+                "developer": "@RDXallhacknew",
+                "status": "100% OK",
+                "searched_term": searchTerm,
+                "api_response": realResponse
+            };
+
+            // স্ক্রিনে সুন্দরভাবে গ্রীন কালারে প্রিন্ট
+            outputElement.innerText = JSON.stringify(finalResult, null, 4);
+
+        } catch (error) {
+            // এরর হলেও শুধু আপনার ক্রেডিটই দেখাবে
+            const errorResult = {
+                "developer": "@RDXallhacknew",
+                "status": "Failed",
+                "message": "Could not connect to the real API. Please try again."
+            };
+            outputElement.innerText = JSON.stringify(errorResult, null, 4);
         }
-        fetchApi();
-    </script>
+    }
+
+    // পেজ লোড হওয়া মাত্রই রান হবে
+    getRealtimeData();
+</script>
+
 </body>
 </html>
