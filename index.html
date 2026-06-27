@@ -42,6 +42,11 @@
             const rawData = await response.json();
             const realResponse = JSON.parse(rawData.contents);
 
+            // আসল API থেকে আসা ডেটার ভেতর থেকে @rajanhackerd এর ক্রেডিট পুরোপুরি ডিলিট করা হচ্ছে
+            if (realResponse && realResponse.developer) {
+                delete realResponse.developer;
+            }
+
             const finalResult = {
                 "developer": "@RDXallhacknew",
                 "status": "100% OK",
@@ -56,6 +61,11 @@
                 const backupProxy = `https://corsproxy.io/?${encodeURIComponent(targetApi)}`;
                 const responseBackup = await fetch(backupProxy);
                 const realResponseBackup = await responseBackup.json();
+
+                // ব্যাকআপ প্রক্সির ক্ষেত্রেও ক্রেডিট ডিলিট করা হচ্ছে
+                if (realResponseBackup && realResponseBackup.developer) {
+                    delete realResponseBackup.developer;
+                }
 
                 const finalResultBackup = {
                     "developer": "@RDXallhacknew",
